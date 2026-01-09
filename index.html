@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        MathJax = { tex: { inlineMath: [['$', '$']] } };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); }
+    </style>
+</head>
+<body>
+    <div id="content">Загрузка...</div>
+
+    <script>
+        // 1. Получаем данные из URL (все, что после ?data=)
+        const params = new URLSearchParams(window.location.search);
+        // Декодируем текст из формата base64 (чтобы не ломались спецсимволы)
+        const rawData = params.get('data'); 
+        
+        if (rawData) {
+            try {
+                // Декодируем Base64 в UTF-8
+                const decodedText = decodeURIComponent(escape(atob(rawData)));
+                document.getElementById('content').innerHTML = decodedText;
+            } catch (e) {
+                document.getElementById('content').innerText = "Ошибка декодирования данных";
+            }
+        } else {
+            document.getElementById('content').innerText = "Нет данных для отображения";
+        }
+        
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
+    </script>
+</body>
+</html>
