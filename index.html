@@ -1,40 +1,25 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script>
-        MathJax = { tex: { inlineMath: [['$', '$']] } };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <title>LaTeX Renderer</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <style>
-        body { font-family: sans-serif; padding: 20px; background: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); }
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; font-size: 2em; background: #1a1a1a; color: white; }
     </style>
 </head>
 <body>
-    <div id="content">Загрузка...</div>
-
+    <div id="math"></div>
     <script>
-        // 1. Получаем данные из URL (все, что после ?data=)
-        const params = new URLSearchParams(window.location.search);
-        // Декодируем текст из формата base64 (чтобы не ломались спецсимволы)
-        const rawData = params.get('data'); 
-        
-        if (rawData) {
-            try {
-                // Декодируем Base64 в UTF-8
-                const decodedText = decodeURIComponent(escape(atob(rawData)));
-                document.getElementById('content').innerHTML = decodedText;
-            } catch (e) {
-                document.getElementById('content').innerText = "Ошибка декодирования данных";
+        window.onload = function() {
+            // Получаем LaTeX из параметра 'f' в URL
+            const params = new URLSearchParams(window.location.search);
+            const formula = params.get('f');
+            if (formula) {
+                katex.render(formula, document.getElementById('math'), { throwOnError: False });
             }
-        } else {
-            document.getElementById('content').innerText = "Нет данных для отображения";
-        }
-        
-        window.Telegram.WebApp.ready();
-        window.Telegram.WebApp.expand();
+        };
     </script>
 </body>
 </html>
