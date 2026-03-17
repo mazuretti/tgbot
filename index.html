@@ -15,7 +15,7 @@
         window.onload = function() {
             // Получаем LaTeX из параметра 'f' в URL
             const params = new URLSearchParams(window.location.search);
-            const formula = params.get('f');
+            const formula = params.get('data');
             if (formula) {
                 katex.render(formula, document.getElementById('math'), { throwOnError: False });
             }
