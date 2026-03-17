@@ -1,25 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>LaTeX Renderer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
     <style>
-        body { display: flex; justify-content: center; align-items: center; height: 100vh; font-size: 2em; background: #1a1a1a; color: white; }
+        body { font-family: sans-serif; padding: 15px; background: #fff; color: #000; }
+        #math { line-height: 1.6; font-size: 1.1em; }
     </style>
 </head>
 <body>
-    <div id="math"></div>
+    <div id="math">Загрузка формул...</div>
+
     <script>
-        window.onload = function() {
-            // Получаем LaTeX из параметра 'f' в URL
+        document.addEventListener("DOMContentLoaded", function() {
             const params = new URLSearchParams(window.location.search);
-            const formula = params.get('data');
-            if (formula) {
-                katex.render(formula, document.getElementById('math'), { throwOnError: False });
+            const base64Data = params.get('data');
+            
+            if (base64Data) {
+                try {
+                    // Декодируем Base64 в строку (учитываем UTF-8)
+                    const decodedText = decodeURIComponent(atob(base64Data).split('').map(function(c) {
+                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                    }).join(''));
+
+                    const outputElement = document.getElementById('math');
+                    outputElement.innerHTML = decodedText;
+                    
+                    // Запуск рендеринга KaTeX
+                    renderMathInElement(outputElement, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false
+                    });
+                } catch (e) {
+                    document.getElementById('math').innerText = "Ошибка обработки данных.";
+                }
             }
-        };
+        });
     </script>
 </body>
 </html>
